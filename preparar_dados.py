@@ -116,19 +116,19 @@ fig1 = px.area(
         "Year": "Ano de Lançamento",
         "Global_Sales": "Vendas Globais (milhões de cópias)",
         "Familia": "Família de Plataforma"
-    },
-    title="1. Evolução das Vendas Globais por Família de Plataforma (1985–2016)"
+    }
 )
 fig1.update_traces(mode="lines", hovertemplate="<b>%{fullData.name}</b><br>Ano: %{x}<br>Vendas: %{y:.2f}M<extra></extra>")
 fig1.update_layout(
     template="plotly_white",
     hovermode="x unified",
-    title=dict(y=0.95, x=0.01, xanchor="left", yanchor="top"),
-    legend=dict(orientation="h", yanchor="top", y=-0.16, xanchor="center", x=0.5),
-    margin=dict(t=70, l=55, r=30, b=90),
-    height=480
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0, title_text=""),
+    xaxis=dict(automargin=True),
+    yaxis=dict(automargin=True),
+    margin=dict(t=55, l=60, r=25, b=55),
+    height=450
 )
-fig1.add_vline(x=2008, line_dash="dash", line_color="#334155", annotation_text="Pico histórico: 2008 (678.9M)", annotation_position="top left")
+fig1.add_vline(x=2008, line_dash="dash", line_color="#334155", annotation_text="Pico: 2008 (678.9M)", annotation_position="top left")
 
 # 2. Barras horizontais 100% empilhadas: diferenca cultural entre mercados por genero
 df_reg_long = genero_reg.reset_index().melt(
@@ -161,18 +161,17 @@ fig2 = px.bar(
         "Percentual": "Participação nas Vendas do Gênero (%)",
         "Genre": "Gênero",
         "Regiao_Nome": "Mercado"
-    },
-    title="2. Divisão Regional de Vendas por Gênero (Ordenado pelo Peso do Mercado Japonês)"
+    }
 )
 fig2.update_traces(hovertemplate="<b>%{y}</b> — %{fullData.name}<br>Fatia: %{x:.1f}%<extra></extra>")
 fig2.update_layout(
     barmode="stack",
     template="plotly_white",
-    title=dict(y=0.95, x=0.01, xanchor="left", yanchor="top"),
-    xaxis=dict(ticksuffix="%", range=[0, 100]),
-    legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5),
-    margin=dict(t=70, l=110, r=30, b=90),
-    height=500
+    xaxis=dict(ticksuffix="%", range=[0, 100], automargin=True),
+    yaxis=dict(automargin=True),
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0, title_text=""),
+    margin=dict(t=45, l=110, r=25, b=55),
+    height=460
 )
 
 # 3. Treemap hierarquico interativo (Genre -> Platform -> Top 5 jogos de cada combinacao)
@@ -187,8 +186,7 @@ fig3 = px.treemap(
     values="Global_Sales",
     color="Genre",
     color_discrete_sequence=px.colors.qualitative.Bold,
-    labels={"Global_Sales": "Vendas Globais (M)", "Genre": "Gênero"},
-    title="3. Mapa Hierárquico de Sucessos: Gênero → Plataforma → Títulos Líderes (Clique para Explorar)"
+    labels={"Global_Sales": "Vendas Globais (M)", "Genre": "Gênero"}
 )
 fig3.update_traces(
     hovertemplate="<b>%{label}</b><br>Vendas acumuladas: %{value:.2f} milhões<extra></extra>",
@@ -196,8 +194,8 @@ fig3.update_traces(
 )
 fig3.update_layout(
     template="plotly_white",
-    margin=dict(t=60, l=20, r=20, b=20),
-    height=540
+    margin=dict(t=15, l=15, r=15, b=15),
+    height=500
 )
 
 # 4. Boxplot em escala logaritmica + destaque para os blockbusters (>15M)
@@ -232,7 +230,7 @@ fig4.add_trace(
         x=hits["Genre"],
         y=hits["Global_Sales"],
         mode="markers",
-        name="Megassucessos (≥ 15M cópias — passe o mouse para ver o jogo)",
+        name="Megassucessos (≥ 15M cópias — passe o mouse nos losangos vermelhos)",
         marker=dict(size=9, color="#dc2626", symbol="diamond", line=dict(width=1, color="white")),
         text=hits["Name"] + " (" + hits["Platform"] + ", " + hits["Year"].astype(str) + ")",
         hovertemplate="<b>%{text}</b><br>Gênero: %{x}<br>Vendas Globais: %{y:.2f}M<extra></extra>"
@@ -240,29 +238,24 @@ fig4.add_trace(
 )
 
 fig4.update_layout(
-    title=dict(
-        text="4. A Cauda Longa dos Jogos: Distribuição por Gênero (Escala Log) e Megassucessos",
-        y=0.95,
-        x=0.01,
-        xanchor="left",
-        yanchor="top"
-    ),
     template="plotly_white",
     yaxis=dict(
-        title="Vendas Globais em Milhões (Escala Logarítmica)",
+        title="Vendas Globais em Milhões (Escala Log)",
         type="log",
         tickvals=[0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 80],
-        ticktext=["0.01M", "0.05M", "0.1M", "0.2M", "0.5M", "1M", "2M", "5M", "10M", "20M", "50M", "80M"]
+        ticktext=["0.01M", "0.05M", "0.1M", "0.2M", "0.5M", "1M", "2M", "5M", "10M", "20M", "50M", "80M"],
+        automargin=True
     ),
     xaxis=dict(
         title="Gênero (ordenado pela mediana de vendas)",
         categoryorder="array",
-        categoryarray=ordem_generos
+        categoryarray=ordem_generos,
+        automargin=True
     ),
     showlegend=True,
-    legend=dict(orientation="h", yanchor="top", y=-0.16, xanchor="center", x=0.5),
-    margin=dict(t=70, l=65, r=30, b=90),
-    height=520
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
+    margin=dict(t=45, l=65, r=25, b=65),
+    height=470
 )
 
 # exportando os graficos em HTML embutido no relatorio visual final
@@ -431,6 +424,7 @@ html_completo = f"""<!DOCTYPE html>
     <section class="section-card">
       <h2>2. Visualizações Interativas e Investigação</h2>
       <p>Passe o cursor sobre os gráficos para consultar os valores detalhados, clique nos itens da legenda para isolar séries específicas ou clique nos blocos do mapa hierárquico (Gráfico 3) para navegar pelos níveis.</p>
+      <h3>1. Evolução das Vendas Globais por Família de Plataforma (1985–2016)</h3>
       {html_fig1}
       <div class="note-box">
         <strong>Leitura do Gráfico 1:</strong> A série histórica mostra como a indústria saltou de um patamar de ~200 milhões de cópias anuais no fim dos anos 1990 para quase 680 milhões em 2008, puxada simultaneamente pela popularização dos controles de movimento (Nintendo Wii), pelos portáteis (Nintendo DS) e pela disputa entre PS3 e Xbox 360.
@@ -438,6 +432,7 @@ html_completo = f"""<!DOCTYPE html>
     </section>
 
     <section class="section-card">
+      <h3>2. Divisão Regional de Vendas por Gênero (Ordenado pelo Peso do Mercado Japonês)</h3>
       {html_fig2}
       <div class="note-box">
         <strong>Leitura do Gráfico 2:</strong> Ordenando os gêneros pela participação japonesa, fica visível que o mercado não é homogêneo. Enquanto jogos de tiro (<em>Shooter</em>) e esportes têm menos de 11% de suas vendas no Japão e mais de 50% na América do Norte, o gênero <em>Role-Playing</em> (RPG) obtém 37,9% de toda a sua receita global apenas no mercado japonês.
@@ -445,6 +440,7 @@ html_completo = f"""<!DOCTYPE html>
     </section>
 
     <section class="section-card">
+      <h3>3. Mapa Hierárquico de Sucessos: Gênero → Plataforma → Títulos Líderes (Clique para Explorar)</h3>
       {html_fig3}
       <div class="note-box">
         <strong>Leitura do Gráfico 3 (Interativo — Clique nas caixas):</strong> O treemap permite cruzar três dimensões simultaneamente (gênero, console e título). Ao clicar em <em>Sports</em> ou <em>Platform</em>, nota-se como a Nintendo domina o topo dos jogos individuais mais vendidos com títulos empacotados ou familiares (como <em>Wii Sports</em> com 82,74M e <em>Super Mario Bros.</em> com 40,24M), enquanto <em>Action</em> e <em>Shooter</em> têm vendas distribuídas entre PS2, PS3 e Xbox 360 (liderados pela série <em>Grand Theft Auto</em> e <em>Call of Duty</em>).
@@ -452,6 +448,7 @@ html_completo = f"""<!DOCTYPE html>
     </section>
 
     <section class="section-card">
+      <h3>4. A Cauda Longa dos Jogos: Distribuição por Gênero (Escala Log) e Megassucessos</h3>
       {html_fig4}
       <div class="note-box">
         <strong>Leitura do Gráfico 4:</strong> O uso da escala logarítmica no eixo vertical é indispensável porque a distribuição real é altamente assimétrica. A mediana geral da indústria é de apenas {mediana_geral:.2f} milhão (170 mil cópias), mas cada gênero possui poucos títulos que vendem de 50 a 400 vezes mais que um lançamento mediano.
