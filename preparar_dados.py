@@ -123,9 +123,10 @@ fig1.update_traces(mode="lines", hovertemplate="<b>%{fullData.name}</b><br>Ano: 
 fig1.update_layout(
     template="plotly_white",
     hovermode="x unified",
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-    margin=dict(t=80, l=50, r=30, b=50),
-    height=460
+    title=dict(y=0.95, x=0.01, xanchor="left", yanchor="top"),
+    legend=dict(orientation="h", yanchor="top", y=-0.16, xanchor="center", x=0.5),
+    margin=dict(t=70, l=55, r=30, b=90),
+    height=480
 )
 fig1.add_vline(x=2008, line_dash="dash", line_color="#334155", annotation_text="Pico histórico: 2008 (678.9M)", annotation_position="top left")
 
@@ -167,10 +168,11 @@ fig2.update_traces(hovertemplate="<b>%{y}</b> — %{fullData.name}<br>Fatia: %{x
 fig2.update_layout(
     barmode="stack",
     template="plotly_white",
+    title=dict(y=0.95, x=0.01, xanchor="left", yanchor="top"),
     xaxis=dict(ticksuffix="%", range=[0, 100]),
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-    margin=dict(t=80, l=110, r=30, b=50),
-    height=480
+    legend=dict(orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5),
+    margin=dict(t=70, l=110, r=30, b=90),
+    height=500
 )
 
 # 3. Treemap hierarquico interativo (Genre -> Platform -> Top 5 jogos de cada combinacao)
@@ -206,8 +208,9 @@ ordem_generos = (
     .index.tolist()
 )
 
+cores_box = px.colors.qualitative.Prism
 fig4 = go.Figure()
-for gen in ordem_generos:
+for idx, gen in enumerate(ordem_generos):
     sub = df_limpo[df_limpo["Genre"] == gen]
     fig4.add_trace(
         go.Box(
@@ -215,6 +218,8 @@ for gen in ordem_generos:
             x=[gen] * len(sub),
             name=gen,
             boxpoints=False,
+            showlegend=False,
+            marker_color=cores_box[idx % len(cores_box)],
             line=dict(width=1.5),
             hoverinfo="y+name"
         )
@@ -227,7 +232,7 @@ fig4.add_trace(
         x=hits["Genre"],
         y=hits["Global_Sales"],
         mode="markers",
-        name="Megassucessos (≥ 15M cópias)",
+        name="Megassucessos (≥ 15M cópias — passe o mouse para ver o jogo)",
         marker=dict(size=9, color="#dc2626", symbol="diamond", line=dict(width=1, color="white")),
         text=hits["Name"] + " (" + hits["Platform"] + ", " + hits["Year"].astype(str) + ")",
         hovertemplate="<b>%{text}</b><br>Gênero: %{x}<br>Vendas Globais: %{y:.2f}M<extra></extra>"
@@ -235,7 +240,13 @@ fig4.add_trace(
 )
 
 fig4.update_layout(
-    title="4. A Cauda Longa dos Jogos: Distribuição por Gênero (Escala Log) e Megassucessos",
+    title=dict(
+        text="4. A Cauda Longa dos Jogos: Distribuição por Gênero (Escala Log) e Megassucessos",
+        y=0.95,
+        x=0.01,
+        xanchor="left",
+        yanchor="top"
+    ),
     template="plotly_white",
     yaxis=dict(
         title="Vendas Globais em Milhões (Escala Logarítmica)",
@@ -243,11 +254,15 @@ fig4.update_layout(
         tickvals=[0.01, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 80],
         ticktext=["0.01M", "0.05M", "0.1M", "0.2M", "0.5M", "1M", "2M", "5M", "10M", "20M", "50M", "80M"]
     ),
-    xaxis=dict(title="Gênero (ordenado pela mediana de vendas)"),
+    xaxis=dict(
+        title="Gênero (ordenado pela mediana de vendas)",
+        categoryorder="array",
+        categoryarray=ordem_generos
+    ),
     showlegend=True,
-    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0),
-    margin=dict(t=80, l=60, r=30, b=50),
-    height=500
+    legend=dict(orientation="h", yanchor="top", y=-0.16, xanchor="center", x=0.5),
+    margin=dict(t=70, l=65, r=30, b=90),
+    height=520
 )
 
 # exportando os graficos em HTML embutido no relatorio visual final
